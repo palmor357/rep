@@ -2,102 +2,99 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproductor MP3 - Google Drive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Reproductor MP3 - Android Fijo</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .player {
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 28px;
-            padding: 24px 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border-radius: 32px;
+            padding: 24px 20px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            font-size: 1.6rem;
-            color: #1a1a2e;
+            font-size: 1.8rem;
+            color: #333;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .drive-info {
-            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-            color: white;
-            padding: 12px;
-            border-radius: 16px;
-            margin: 16px 0;
-            text-align: center;
+        .sub {
+            color: #666;
             font-size: 0.85rem;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        .url-input-group {
-            display: flex;
-            gap: 10px;
-            margin: 16px 0;
-        }
-
-        .url-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-family: monospace;
-        }
-
-        .add-btn {
-            background: #1a1a2e;
+        /* Botón optimizado para Android */
+        .folder-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 0 20px;
-            border-radius: 30px;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
             font-weight: 600;
+            width: 100%;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            touch-action: manipulation;
+        }
+
+        .folder-btn:active {
+            transform: scale(0.97);
         }
 
         .playlist {
-            max-height: 350px;
+            max-height: 300px;
             overflow-y: auto;
             margin: 16px 0;
-            border-radius: 16px;
+            border-radius: 20px;
             background: #f5f5f5;
         }
 
         .song-item {
-            padding: 12px 16px;
+            padding: 14px 16px;
             border-bottom: 1px solid #e0e0e0;
             cursor: pointer;
+            transition: background 0.2s;
+            touch-action: manipulation;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .song-item:hover {
-            background: #e8e8e8;
+        .song-item:active {
+            background: #e0e0e0;
         }
 
         .song-item.active {
-            background: #e3f2fd;
-            border-left: 4px solid #4285f4;
+            background: linear-gradient(90deg, #667eea20 0%, #764ba220 100%);
+            border-left: 4px solid #764ba2;
         }
 
         .song-name {
@@ -107,39 +104,42 @@
             flex: 1;
         }
 
-        .delete-song {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #999;
-            padding: 0 8px;
-        }
-
         .controls {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 20px;
-            margin: 20px 0;
+            margin: 24px 0;
         }
 
         .ctrl-btn {
             background: #f0f0f0;
             border: none;
-            width: 55px;
-            height: 55px;
-            border-radius: 55px;
-            font-size: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 60px;
+            font-size: 1.8rem;
             cursor: pointer;
+            transition: all 0.1s ease;
+            touch-action: manipulation;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.92);
+            background: #e0e0e0;
         }
 
         .play-btn {
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             width: 70px;
             height: 70px;
-            font-size: 1.8rem;
+            font-size: 2rem;
+            box-shadow: 0 4px 15 rgba(102,126,234,0.4);
         }
 
         .progress-container {
@@ -158,72 +158,67 @@
             width: 100%;
             height: 6px;
             background: #e0e0e0;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
+            touch-action: manipulation;
         }
 
         .progress-fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #4285f4, #34a853);
-            border-radius: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 0.1s linear;
         }
 
         .current-song {
             text-align: center;
-            font-size: 0.9rem;
+            margin: 16px 0 8px;
             font-weight: 500;
-            color: #1a1a2e;
-            padding: 10px;
-            background: #f0f0f0;
+            color: #333;
+            font-size: 1rem;
+            padding: 8px;
+            background: #f9f9f9;
             border-radius: 20px;
-            margin: 12px 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
+        .playlist::-webkit-scrollbar {
+            width: 4px;
+        }
+        .playlist::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .playlist::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
         .empty-msg {
             text-align: center;
-            padding: 40px;
+            padding: 40px 20px;
             color: #999;
         }
 
-        .help-text {
+        footer {
             font-size: 0.7rem;
-            color: #666;
             text-align: center;
-            margin-top: 12px;
-        }
-
-        .example {
-            font-family: monospace;
-            font-size: 0.7rem;
-            background: #f0f0f0;
-            padding: 8px;
-            border-radius: 8px;
-            margin-top: 8px;
-            word-break: break-all;
+            color: #aaa;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="player">
-        <h1>
-            🎵 Drive MP3
-            <span style="font-size: 0.8rem;">by Google</span>
-        </h1>
-        
-        <div class="drive-info">
-            📁 Reproduce MP3 directamente desde Google Drive
-        </div>
+        <h1>🎵 Mi MP3</h1>
+        <div class="sub">Optimizado para Android (Sin Cierres)</div>
 
-        <div class="url-input-group">
-            <input type="text" class="url-input" id="driveUrl" placeholder="Pega el enlace de Drive (compartir → cualquier persona)">
-            <button class="add-btn" id="addBtn">➕ Agregar</button>
-        </div>
+        <input type="file" id="folderInput" accept="audio/mp3,audio/mpeg" multiple style="display: none;">
+        <button class="folder-btn" id="selectFolderBtn">🎵 SELECCIONAR CANCIONES</button>
 
-        <div class="current-song" id="currentSong">🎧 Sin canción seleccionada</div>
+        <div class="current-song" id="currentSong">🎧 Ninguna canción seleccionada</div>
 
         <div class="progress-container">
             <div class="time-info">
@@ -242,25 +237,16 @@
         </div>
 
         <div class="playlist" id="playlist">
-            <div class="empty-msg">🎵 Agrega enlaces de Drive para comenzar</div>
+            <div class="empty-msg">📂 Elige tus MP3 para empezar</div>
         </div>
-        
-        <div class="help-text">
-            💡 Cómo obtener el enlace de Drive:
-            <div class="example">
-                1. Sube tu MP3 a Drive<br>
-                2. Botón derecho → Compartir → "Cualquier persona"<br>
-                3. Copia el enlace y pégalo aquí
-            </div>
-        </div>
+        <footer>Toque en una canción para reproducir</footer>
     </div>
 
     <audio id="audioPlayer"></audio>
 
     <script>
-        // Elementos
-        const driveUrlInput = document.getElementById('driveUrl');
-        const addBtn = document.getElementById('addBtn');
+        const folderInput = document.getElementById('folderInput');
+        const selectFolderBtn = document.getElementById('selectFolderBtn');
         const playlistDiv = document.getElementById('playlist');
         const audio = document.getElementById('audioPlayer');
         const playPauseBtn = document.getElementById('playPauseBtn');
@@ -272,148 +258,71 @@
         const progressBar = document.getElementById('progressBar');
         const progressFill = document.getElementById('progressFill');
 
-        let songList = [];
+        let songList = [];      
         let currentIndex = -1;
         let isPlaying = false;
 
-        // Convertir enlace de Drive a URL directa descargable
-        function convertDriveUrlToDirect(driveUrl) {
-            // Patrones de Drive
-            const patterns = [
-                { regex: /drive\.google\.com\/file\/d\/([^\/]+)/, get: (id) => `https://drive.google.com/uc?export=download&id=${id}` },
-                { regex: /drive\.google\.com\/open\?id=([^&]+)/, get: (id) => `https://drive.google.com/uc?export=download&id=${id}` },
-                { regex: /\/d\/([^\/]+)/, get: (id) => `https://drive.google.com/uc?export=download&id=${id}` },
-                { regex: /id=([^&]+)/, get: (id) => `https://drive.google.com/uc?export=download&id=${id}` }
-            ];
-            
-            for (const pattern of patterns) {
-                const match = driveUrl.match(pattern.regex);
-                if (match) {
-                    return pattern.get(match[1]);
-                }
-            }
-            return driveUrl;
-        }
+        selectFolderBtn.addEventListener('click', () => {
+            folderInput.click();
+        });
 
-        // Extraer nombre del archivo del enlace
-        function extractFileName(url, originalInput) {
-            // Intentar obtener de la URL original
-            const match = originalInput.match(/([^\/]+)(\.mp3|\.MP3)/i);
-            if (match) return match[1];
+        folderInput.addEventListener('change', (event) => {
+            const files = Array.from(event.target.files);
             
-            // Si no, usar ID de Drive
-            const idMatch = originalInput.match(/id=([^&]+)|d\/([^\/]+)/);
-            if (idMatch) {
-                const id = idMatch[1] || idMatch[2];
-                return `Canción_${id.substring(0, 8)}`;
-            }
-            
-            return `Canción_${songList.length + 1}`;
-        }
+            if (files.length === 0) return;
 
-        // Agregar canción desde URL
-        function addSongFromUrl(driveUrl) {
-            if (!driveUrl.trim()) {
-                alert('Por favor ingresa un enlace de Google Drive');
-                return false;
-            }
-            
-            const directUrl = convertDriveUrlToDirect(driveUrl);
-            const fileName = extractFileName(directUrl, driveUrl);
-            
-            // Verificar si ya existe
-            if (songList.some(song => song.url === directUrl)) {
-                alert('Esta canción ya está en la lista');
-                return false;
-            }
-            
-            songList.push({
-                id: songList.length,
-                name: fileName,
-                url: directUrl,
-                originalUrl: driveUrl
+            // Limpiar URLs anteriores para liberar memoria interna de Android
+            songList.forEach(song => {
+                if (song.url) URL.revokeObjectURL(song.url);
             });
-            
-            renderPlaylist();
-            
-            // Si es la primera canción, cargarla automáticamente
-            if (songList.length === 1) {
-                currentIndex = 0;
-                loadSong(0);
-            }
-            
-            driveUrlInput.value = '';
-            return true;
-        }
 
-        // Renderizar lista
+            // Mapear los archivos seleccionados directamente
+            songList = files.map((file, idx) => ({
+                id: idx,
+                name: file.name.replace('.mp3', '').replace(/_/g, ' '),
+                url: URL.createObjectURL(file),
+                file: file
+            }));
+
+            renderPlaylist();
+            if (songList.length > 0) {
+                currentIndex = 0;
+                loadSong(currentIndex);
+            }
+        });
+
         function renderPlaylist() {
             if (songList.length === 0) {
-                playlistDiv.innerHTML = '<div class="empty-msg">🎵 Agrega enlaces de Drive para comenzar</div>';
+                playlistDiv.innerHTML = '<div class="empty-msg">📂 Elige tus MP3 para empezar</div>';
                 return;
             }
-            
+
             playlistDiv.innerHTML = '';
             songList.forEach((song, idx) => {
                 const songDiv = document.createElement('div');
                 songDiv.className = 'song-item';
                 if (idx === currentIndex) songDiv.classList.add('active');
-                
                 songDiv.innerHTML = `
                     <span class="song-name">${escapeHtml(song.name)}</span>
-                    <button class="delete-song" data-idx="${idx}">🗑️</button>
                 `;
-                
-                songDiv.querySelector('.song-name').addEventListener('click', () => {
+                songDiv.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     currentIndex = idx;
                     loadSong(currentIndex);
                     playAudio();
                 });
-                
-                const deleteBtn = songDiv.querySelector('.delete-song');
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    deleteSong(idx);
-                });
-                
                 playlistDiv.appendChild(songDiv);
             });
-        }
-        
-        function deleteSong(index) {
-            if (index < 0 || index >= songList.length) return;
-            
-            // Si es la canción actual, detener reproducción
-            if (index === currentIndex) {
-                audio.pause();
-                isPlaying = false;
-                playPauseBtn.textContent = '▶';
-            }
-            
-            songList.splice(index, 1);
-            
-            // Ajustar índice actual
-            if (songList.length === 0) {
-                currentIndex = -1;
-                currentSongSpan.textContent = '🎧 Sin canción seleccionada';
-                audio.src = '';
-            } else if (currentIndex >= index) {
-                currentIndex = Math.max(0, currentIndex - 1);
-                if (currentIndex < songList.length) {
-                    loadSong(currentIndex);
-                }
-            }
-            
-            renderPlaylist();
         }
 
         function loadSong(index) {
             if (!songList[index]) return;
-            
+
             audio.src = songList[index].url;
             audio.load();
             currentSongSpan.textContent = `🎵 ${songList[index].name}`;
             updateActiveClass(index);
+            
             currentTimeSpan.textContent = '0:00';
             totalTimeSpan.textContent = '0:00';
             progressFill.style.width = '0%';
@@ -421,23 +330,9 @@
             playPauseBtn.textContent = '▶';
         }
 
-        function updateActiveClass(index) {
-            const items = document.querySelectorAll('.song-item');
-            items.forEach((item, i) => {
-                if (i === index) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
-        }
-
         function playAudio() {
             if (!songList.length || currentIndex === -1) return;
-            audio.play().catch(err => {
-                console.error('Error:', err);
-                alert('No se pudo reproducir. Verifica que el enlace sea público y apunte a un MP3');
-            });
+            audio.play().catch(err => console.log("Error al reproducir:", err));
             isPlaying = true;
             playPauseBtn.textContent = '⏸';
         }
@@ -471,18 +366,23 @@
             playAudio();
         }
 
-        // Eventos
-        addBtn.addEventListener('click', () => addSongFromUrl(driveUrlInput.value));
-        
-        driveUrlInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addSongFromUrl(driveUrlInput.value);
-        });
+        function updateActiveClass(index) {
+            const items = document.querySelectorAll('.song-item');
+            items.forEach((item, i) => {
+                if (i === index) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
 
         audio.addEventListener('timeupdate', () => {
             if (audio.duration) {
                 const percent = (audio.currentTime / audio.duration) * 100;
                 progressFill.style.width = `${percent}%`;
                 currentTimeSpan.textContent = formatTime(audio.currentTime);
+                totalTimeSpan.textContent = formatTime(audio.duration);
             }
         });
 
@@ -497,13 +397,21 @@
         progressBar.addEventListener('click', (e) => {
             if (!audio.duration) return;
             const rect = progressBar.getBoundingClientRect();
-            const percent = (e.clientX - rect.left) / rect.width;
+            const clickX = e.clientX - rect.left;
+            const percent = clickX / rect.width;
             audio.currentTime = percent * audio.duration;
         });
 
         playPauseBtn.addEventListener('click', togglePlayPause);
         nextBtn.addEventListener('click', nextSong);
         prevBtn.addEventListener('click', prevSong);
+
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', () => playAudio());
+            navigator.mediaSession.setActionHandler('pause', () => pauseAudio());
+            navigator.mediaSession.setActionHandler('previoustrack', () => prevSong());
+            navigator.mediaSession.setActionHandler('nexttrack', () => nextSong());
+        }
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return '0:00';
@@ -520,15 +428,6 @@
                 return m;
             });
         }
-
-        // Ejemplo pre-cargado
-        const demoSongs = [
-            'https://drive.google.com/uc?export=download&id=1UqM4FrQ5O2BzKQVpTqDnVXyZQhE1QxYx',
-            'https://drive.google.com/uc?export=download&id=1VrN3GpHjL6wXyZqT8mNpOqRsTuVwXyZ'
-        ];
-        
-        // Solo para demo - reemplaza con tus enlaces reales
-        console.log('Agrega tus propios enlaces de Drive');
     </script>
 </body>
 </html>
